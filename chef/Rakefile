@@ -1,0 +1,57 @@
+desc 'Performs some pre-flight checks'
+task :pre_flight_checks do
+  unless File.exists?("#{ENV['HOME']}/.chef")
+    puts 'Cannot find ~/.chef directory!'
+    Kernel.exit(1)
+  end
+  envs = %w(CHEF_USER CHEF_ORGNAME)
+  envs.each do |env|
+    unless ENV[env]
+      puts "Cannot find the environment variable #{env}!"
+      Kernel.exit(1)
+    end
+  end
+end
+
+desc 'Creates a new cookbook'
+task :new_cookbook, :name do |t, args|
+  sh "chef generate cookbook cookbooks/#{args.name}"
+  sh "chef generate attribute cookbooks/#{args.name} default"
+end
+
+desc 'Runs foodcritic against all cookbooks'
+task :lint do
+  sh 'chef exec foodcritic -f any cookbooks'
+end
+
+desc 'Runs knife cookbook test against all cookbooks'
+task :unittest do
+  Dir.chdir("cookbooks/deploygif") do
+    sh 'chef exec rspec'
+  end
+end
+
+desc 'Run Kitchen converge and verify'
+task :acceptancetest do
+  Dir.chdir("cookbooks/deploygif") do
+    sh 'chef exec kitchen converge'
+    sh 'chef exec kitchen verify'
+  end
+end
+
+desc 'Run all tests'
+task test: [
+  :lint,
+  :unittest,
+  :acceptancetest
+]
+
+desc 'Uploads Berkshelf cookbooks to our chef server'
+task :berks_upload do
+  sh 'chef exec berks upload'
+end
+
+desc 'Install cookbooks specified in the Berksfile'
+task :berks_install do
+  sh 'chef exec berks install'
+end

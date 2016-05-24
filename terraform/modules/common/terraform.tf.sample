@@ -1,0 +1,9 @@
+output "validation_key" {
+    value = <<EOF
+    -----BEGIN RSA PRIVATE KEY-----
+    MIIFpQIBAAKCAQEF3reCBChf0fpic9QvvSVTH61ZeMIi9AwNZjsqeqnwksPYTTmT
+    ...
+    BZUM3hp9Vnd5j7OIF0MnApYqNpdCXI/cdwfTUOGhkmz40bB3kEhQmoM=
+    -----END RSA PRIVATE KEY-----
+EOF
+}

@@ -1,0 +1,40 @@
+server {
+    server_name _ "" <%= @servername %> www.<%= @servername %>;
+    server_tokens off;
+    listen 80 default_server;
+    access_log <%= @log_dir %>/deploygif-access.log;
+    error_log <%= @log_dir %>/deploygif-error.log error;
+
+    gzip             on;
+    gzip_static      on;
+    gzip_min_length  1000;
+    gzip_proxied     any;
+    gzip_types       text/plain
+                     text/css text/xml
+                     text/javascript
+                     application/json
+                     application/javascript
+                     application/x-javascript
+                     application/xml
+                     application/xml+rss
+                     image/x-icon
+                     ;
+
+    # Do not serve any dot files
+    location ~ /\. {
+        access_log off;
+        log_not_found off;
+        deny all;
+    }
+
+    # Serve static files
+    location / {
+        root <%= @install_dir %>/web;
+        index index.html;
+    }
+
+    # Send /success and /fail to lua application
+    location ~ ^/(success|fail)(/|.json|.gif)?$ {
+        content_by_lua_file <%= @install_dir %>/app/app.lua;
+    }
+}

@@ -1,0 +1,11 @@
+name 'deploygif'
+source_url 'https://github.com/z0mbix/deploygif'
+issues_url 'https://github.com/z0mbix/deploygif'
+maintainer 'z0mbix'
+maintainer_email 'zombie@zombix.org'
+license 'MIT'
+description 'Installs and configures deploygif'
+long_description 'Installs and configures deploygif'
+version '0.1.0'
+
+depends 'openresty'

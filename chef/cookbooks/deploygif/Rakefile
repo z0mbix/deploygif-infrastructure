@@ -1,0 +1,17 @@
+desc 'Uploads cookbook to the chef server'
+task :upload do
+  sh 'chef exec knife cookbook upload'
+end
+
+desc 'Set-up Test Kitchen'
+task :setup do
+  sh 'chef exec kitchen create'
+end
+
+desc 'Run Foodcritic, ChefSpec and Test Kitchen'
+task :test do
+  sh 'chef exec foodcritic -f any .'
+  sh 'chef exec rspec'
+  sh 'chef exec kitchen converge'
+  sh 'chef exec kitchen verify'
+end

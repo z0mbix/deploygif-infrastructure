@@ -1,0 +1,6 @@
+<% contents = File.readlines(ENV['CHEF_VALIDATOR_KEY']) -%>
+output "validation_key" {
+    value = <<EOF
+<% contents.each do |line| %>    <%= line %><% end %>
+EOF
+}

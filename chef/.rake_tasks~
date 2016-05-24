@@ -1,0 +1,7 @@
+berks_install
+berks_upload
+lint
+new_cookbook[name]
+pre_flight_checks
+test
+unittest

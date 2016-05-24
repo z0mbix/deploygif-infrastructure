@@ -1,0 +1,7 @@
+env
+chef/.vagrant
+chef/.kitchen
+terraform/modules/common/terraform.tf
+terraform.tfstate
+terraform.tfstate.backup
+.terraform

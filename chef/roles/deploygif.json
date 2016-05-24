@@ -1,0 +1,20 @@
+{
+  "name": "deploygif",
+  "description": "Role for deploygif servers",
+  "chef_type": "role",
+  "json_class": "Chef::Role",
+  "run_list": [
+    "recipe[redisio]",
+    "recipe[redisio::enable]",
+    "recipe[openresty]",
+    "recipe[deploygif]"
+  ],
+  "default_attributes": {
+    "redisio": {
+      "package_install": true,
+      "default_settings": {
+        "shutdown_save": true
+      }
+    }
+  }
+}

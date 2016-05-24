@@ -1,0 +1,48 @@
+desc 'Performs some pre-flight checks'
+task :pre_flight_checks do
+  # Has the user set-up Chef?
+  unless File.exists?("#{ENV['HOME']}/.chef")
+    puts 'Cannot find ~/.chef directory!'
+    Kernel.exit(1)
+  end
+
+  # Are all the environment variables we need present?
+  envs = %w(CHEF_USER CHEF_ORGNAME DIGITALOCEAN_TOKEN TF_VAR_chef_org TF_VAR_ssh_key_file)
+  envs.each do |env|
+    unless ENV[env]
+      puts "Cannot find the environment variable #{env}!"
+      Kernel.exit(1)
+    end
+  end
+end
+
+desc 'Create a new SSH key pair if one doesn\'t exist'
+task :createsshkeypair do
+  sh 'test -f ~/.ssh/deploygif || ssh-keygen -q -t rsa -f ~/.ssh/deploygif -N '' -C deploygif'
+end
+
+desc 'Create the terraform module from the chef validator key'
+task :createmodulekey do
+  erb -T - modules/common/terraform.tf.erb > modules/common/terraform.tf
+end
+
+desc 'Perform a terrform dry-run'
+task :plan do
+  :createsshkeypair
+  :createmodulekey
+  sh 'terraform get'
+  sh 'terraform plan'
+end
+
+desc 'Perform a terrform run'
+task :apply do
+  :createsshkeypair
+  :createmodulekey
+  sh 'terraform get'
+  sh 'terraform apply'
+end
+
+desc 'Destroy all resources'
+task :destroy do
+  sh 'terraform destroy'
+end
