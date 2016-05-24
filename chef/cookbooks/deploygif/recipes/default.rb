@@ -58,11 +58,15 @@ end
 
 # Reload nginx (Doing this, as service['nginx'] doesn't work
 # correctly with chefspec
-execute "reload_nginx" do
-  command "nginx -s reload"
-  timeout 5
-  action :nothing
+service 'nginx' do
+  action [:enable, :start]
 end
+
+#execute "reload_nginx" do
+#  command "nginx -s reload"
+#  timeout 5
+#  action :nothing
+#end
 
 # Run redis migrations
 execute "run_migrations" do
@@ -80,9 +84,9 @@ git node['deploygif']['install_dir'] do
   user 'www-data'
   group 'www-data'
   action :sync
-  # notifies :reload, 'service[nginx]', :immediately
+  notifies :reload, 'service[nginx]', :immediately
   notifies :run, 'execute[run_migrations]', :immediately
-  notifies :run, 'execute[reload_nginx]', :immediately
+  #notifies :run, 'execute[reload_nginx]', :immediately
 end
 
 # The openresty/nginx vhost configuration file
@@ -96,6 +100,6 @@ template "#{node['openresty']['dir']}/conf.d/deploygif.conf" do
     :install_dir => node['deploygif']['install_dir'],
     :log_dir => node['openresty']['log_dir']
   )
-  # notifies :reload, 'service[nginx]', :immediately
-  notifies :run, 'execute[reload_nginx]', :immediately
+  notifies :reload, 'service[nginx]', :immediately
+  #notifies :run, 'execute[reload_nginx]', :immediately
 end

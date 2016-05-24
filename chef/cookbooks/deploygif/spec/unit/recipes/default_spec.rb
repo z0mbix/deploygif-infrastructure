@@ -78,19 +78,18 @@ describe 'deploygif::default' do
         source: 'nginx.conf.erb'
       )
       template = chef_run.template('/etc/nginx/conf.d/deploygif.conf')
-      expect(template).to notify("execute[reload_nginx]").to(:run).immediately
-    end
-
-    it 'executes \'nginx -s reload\' when the nginx vhost template changes' do
-      execute = chef_run.execute('reload_nginx')
-      expect(execute).to do_nothing #.with(cmd: 'nginx -s reload')
-      expect(execute.command).to eq('nginx -s reload')
+      expect(template).to notify("service[nginx]").to(:reload).immediately
     end
 
     it 'executes \'make migrate\' when git pulls new commits' do
       execute = chef_run.execute('run_migrations')
       expect(execute).to do_nothing
       expect(execute.command).to eq('make migrate')
+    end
+
+    it 'Enables and starts the nginx service' do
+      expect(chef_run).to enable_service('nginx')
+      expect(chef_run).to start_service('nginx')
     end
 
     it 'checks out the git repo https://github.com/z0mbix/deploygif.git as user/group www-data and reload nginx' do
@@ -101,7 +100,8 @@ describe 'deploygif::default' do
         group: 'www-data'
       )
       sync_git = chef_run.git('/opt/deploygif')
-      expect(sync_git).to notify("execute[reload_nginx]").to(:run).immediately
+      expect(sync_git).to notify("execute[run_migrations]").to(:run).immediately
+      expect(sync_git).to notify("service[nginx]").to(:reload).immediately
     end
   end
 end

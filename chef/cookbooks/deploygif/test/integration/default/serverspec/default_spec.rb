@@ -51,15 +51,25 @@ describe file('/etc/ssl/resty-auto-ssl-fallback.key') do
   it { should be_mode '644' }
 end
 
+# Check nginx service
 describe service('nginx') do
   it { should be_enabled }
   it { should be_running }
 end
 
+# Check nginx is listening
 describe port(80) do
   it { should be_listening.with('tcp') }
 end
 
-# describe port(8999) do
-#   it { should be_listening.with('tcp') }
-# end
+# Check redis is listening
+describe port(6379) do
+  it { should be_listening.with('tcp') }
+end
+
+# Check redis health check
+describe command("redis-cli ping") do
+  its(:stdout) { should match /PONG/ }
+  its(:exit_status) { should eq 0 }
+end
+

@@ -8,4 +8,5 @@ description 'Installs and configures deploygif'
 long_description 'Installs and configures deploygif'
 version '0.1.0'
 
+depends 'redisio'
 depends 'openresty'
