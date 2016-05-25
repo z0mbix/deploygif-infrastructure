@@ -23,6 +23,12 @@ describe file('/opt/deploygif/.git') do
   it { should be_grouped_into 'www-data' }
 end
 
+# Check git remote is correct
+describe command("git -C /opt/deploygif remote -v | grep fetch") do
+  its(:stdout) { should match /origin\shttps:\/\/github.com\/z0mbix\/deploygif\.git\s\(fetch\)/ }
+  its(:exit_status) { should eq 0 }
+end
+
 describe package('curl') do
   it { should be_installed }
 end
