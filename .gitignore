@@ -1,4 +1,5 @@
 env
+.envrc
 chef/.vagrant
 chef/.kitchen
 terraform/modules/common/terraform.tf
